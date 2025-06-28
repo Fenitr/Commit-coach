@@ -1,0 +1,47 @@
+{
+  "name": "commit-coach",
+  "version": "1.0.0",
+  "description": "Un outil CLI pour générer automatiquement des messages de commit intelligents avec OpenAI",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "commit-coach": "./bin/commit-coach.cmd"
+  },
+  "scripts": {
+    "build": "tsup bin/index.ts --format esm,cjs --out-dir dist --splitting",
+    "dev": "ts-node bin/index.ts",
+    "start": "node dist/index.js",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fenitr/Commit-coach.git"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "openai",
+    "cli",
+    "typescript"
+  ],
+  "author": "Fenitr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fenitr/Commit-coach/issues"
+  },
+  "homepage": "https://github.com/Fenitr/Commit-coach#readme",
+  "dependencies": {
+    "commander": "^14.0.0",
+    "dotenv": "^17.0.0",
+    "prompts": "^2.4.2",
+    "simple-git": "^3.28.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "@types/prompts": "^2.4.9",
+    "ts-node": "^10.9.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
+}
