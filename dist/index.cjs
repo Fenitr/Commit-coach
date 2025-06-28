@@ -25,7 +25,7 @@ var GitService = class {
 // src/domain/services/DiffParser.ts
 var DiffParser = class {
   parse(diff, files) {
-    return `Modifications d\xE9tect\xE9es dans les fichiers : ${files.join(", ")}`;
+    return `\u{1F4DD} Modifications d\xE9tect\xE9es dans : ${files.join(", ")}`;
   }
 };
 
@@ -35,18 +35,60 @@ var MessageBuilder = class {
     this.config = config;
   }
   /**
-   * Génère un message de commit localement à partir des fichiers modifiés.
+   * Génère un message de commit localement à partir du diff Git.
    * @param summary Résumé du diff Git (texte brut).
-   * @returns Un message de commit simple.
+   * @returns Un message de commit intelligent avec username.
    */
   async generate(summary) {
     const added = (summary.match(/^\+[^+]/gm) || []).length;
     const removed = (summary.match(/^-[^-]/gm) || []).length;
     let type = "chore";
-    if (summary.includes("test")) type = "test";
-    else if (summary.includes("fix")) type = "fix";
-    else if (summary.includes("feature") || summary.includes("feat")) type = "feat";
-    return `${type}: update files (+${added}/-${removed})`;
+    if (/test/i.test(summary)) type = "test";
+    else if (/fix/i.test(summary)) type = "fix";
+    else if (/feature|feat/i.test(summary)) type = "feat";
+    else if (/refactor/i.test(summary)) type = "refactor";
+    else if (/docs?/i.test(summary)) type = "docs";
+    else if (/style/i.test(summary)) type = "style";
+    const messagesByType = {
+      feat: [
+        "\u2728 Nouvelle fonctionnalit\xE9 ajout\xE9e",
+        "\u{1F680} Ajout d'une nouvelle capacit\xE9",
+        "feat: am\xE9lioration du produit"
+      ],
+      fix: [
+        "\u{1F41B} Correction d\u2019un bug",
+        "fix: r\xE9paration d\u2019un comportement inattendu",
+        "\u{1F527} R\xE9solution de probl\xE8me sur le code"
+      ],
+      test: [
+        "\u{1F9EA} Ajout ou modification des tests",
+        "test: couverture \xE9tendue",
+        "\u2705 Mise \xE0 jour des tests unitaires"
+      ],
+      docs: [
+        "\u{1F4DD} Mise \xE0 jour de la documentation",
+        "docs: am\xE9lioration du README ou commentaires",
+        "\u{1F4DA} Contenu documentaire enrichi"
+      ],
+      style: [
+        "\u{1F484} Changement de formatage / indentation",
+        "style: mise en conformit\xE9 avec les r\xE8gles de lint",
+        "\u{1F3A8} Ajustement stylistique du code"
+      ],
+      refactor: [
+        "\u267B\uFE0F Refactorisation du code sans changement de comportement",
+        "refactor: am\xE9lioration interne",
+        "\u{1F528} Code restructur\xE9 pour plus de clart\xE9"
+      ],
+      chore: [
+        "\u{1F527} T\xE2che d'entretien",
+        "chore: maintenance ou mise \xE0 jour technique",
+        "\u{1F4E6} MAJ d\xE9pendances ou outils"
+      ]
+    };
+    const possibleMessages = messagesByType[type] || ["commit g\xE9n\xE9rique"];
+    const selectedMessage = possibleMessages[Math.floor(Math.random() * possibleMessages.length)];
+    return `${type}: ${selectedMessage} (+${added}/-${removed}) \u2013 @${this.config.username}`;
   }
 };
 
