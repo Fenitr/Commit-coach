@@ -3,7 +3,8 @@ import { readFile } from "fs/promises";
 
 const configSchema = z.object({
     convention: z.enum(["conventional", "gitmoji"]).optional(),
-    autoCommit: z.boolean().optional()
+    autoCommit: z.boolean().optional(),
+    username: z.string().optional()
 });
 
 export type AppConfig = z.infer<typeof configSchema>;

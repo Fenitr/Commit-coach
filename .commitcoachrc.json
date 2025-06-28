@@ -1,5 +1,5 @@
 {
-    "convention": "conventional",
-    "autoCommit": false
-  }
-  
+  "username": "Fenitr",
+  "convention": "gitmoji",
+  "autoCommit": true
+}

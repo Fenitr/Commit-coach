@@ -1,28 +1,21 @@
-/**
- * Génère un message de commit enrichi basé sur les fichiers modifiés.
- */
 export class MessageBuilder {
-  constructor(private config: { username: string }) {}
+  constructor(private config: { username: string }) { }
 
-  /**
-   * Génère un message de commit localement à partir du diff Git.
-   * @param summary Résumé du diff Git (texte brut).
-   * @returns Un message de commit intelligent avec username.
-   */
   async generate(summary: string): Promise<string> {
     const added = (summary.match(/^\+[^+]/gm) || []).length;
     const removed = (summary.match(/^-[^-]/gm) || []).length;
 
-    // Type de commit
-    let type = "chore";
-    if (/test/i.test(summary)) type = "test";
-    else if (/fix/i.test(summary)) type = "fix";
-    else if (/feature|feat/i.test(summary)) type = "feat";
-    else if (/refactor/i.test(summary)) type = "refactor";
-    else if (/docs?/i.test(summary)) type = "docs";
-    else if (/style/i.test(summary)) type = "style";
+    const lowerSummary = summary.toLowerCase();
 
-    // Génération de message personnalisé selon le type
+    let type = "chore";
+    if (/test/.test(lowerSummary)) type = "test";
+    else if (/fix|bug/.test(lowerSummary)) type = "fix";
+    else if (/feature|feat/.test(lowerSummary)) type = "feat";
+    else if (/refactor/.test(lowerSummary)) type = "refactor";
+    else if (/docs?/.test(lowerSummary)) type = "docs";
+    else if (/style|indent/.test(lowerSummary)) type = "style";
+    else if (/messagebuilder|diffparser|logic|parser/.test(lowerSummary)) type = "refactor";
+
     const messagesByType: Record<string, string[]> = {
       feat: [
         "✨ Nouvelle fonctionnalité ajoutée",
@@ -64,7 +57,7 @@ export class MessageBuilder {
     const possibleMessages = messagesByType[type] || ["commit générique"];
     const selectedMessage = possibleMessages[Math.floor(Math.random() * possibleMessages.length)];
 
-    // Message final
-    return `${type}: ${selectedMessage} (+${added}/-${removed}) – @${this.config.username}`;
+    const username = this.config?.username || "anonymous";
+    return `${type}: ${selectedMessage} (+${added}/-${removed}) – @${username}`;
   }
 }
